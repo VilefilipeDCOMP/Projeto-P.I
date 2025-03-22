@@ -16,12 +16,12 @@ int salvaArquivo();
 tElemento personagem();
 int movimentando();
 
-int main(){
+int main(int argc, char **argv){
     char newFile[100], initFile[100], dimensao[30];
     int modo, x, y;
-	printf("Digite o nome do arquivo do labirinto(com o formato .txt): ");
-	fgets(initFile, sizeof(initFile),stdin);
-    initFile[strcspn(initFile, "\n")] = 0;
+	// Armazena o arquivo
+	for (int i=0; i<argc; i++)
+	   strcpy(initFile,argv[i]);
     
     //Lê a primeira linha do arquivo para determinar as dimensoes do labirinto
     FILE* teste = fopen(initFile, "r");
