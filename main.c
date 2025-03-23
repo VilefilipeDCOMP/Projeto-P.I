@@ -56,15 +56,17 @@ int main(int argc, char **argv){
     scanf("%d", &modo); 
     switch (modo){
     case 1:
+        printf("Em breve\n");
         
         break;
 
     case 2:
-
+        printf("Em breve\n");
         break;
     
     case 3:
-        system("cls"); //em linux é "clear"
+        system("cls"); //em Windows
+        system("clear"); //em Linux
         salvaArquivo(newFile, x, y, labirinto);
         
         break;
