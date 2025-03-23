@@ -5,7 +5,7 @@
 #include <time.h>
 
 int salvaArquivo();
-char personagem();
+void personagem();
 
 int main(int argc, char **argv){
     char newFile[100], initFile[100], dimensao[30] ;
@@ -37,7 +37,7 @@ int main(int argc, char **argv){
         printf("\n");
     }
 	
-    printf("Bem vindo ao labirinto do cirilo!\nQual acao deseja realizar?\n[1] Tentar resolver uma vez.\n[2] Tentar resolver ate conseguir.\n[3] Salvar a resolucao.\n[4] Sair.\n\nDigite o numero que corresponde a sua escolha: ");
+    printf("Qual acao deseja realizar?\n[1] Tentar resolver uma vez.\n[2] Tentar resolver ate conseguir.\n[3] Salvar a resolucao.\n[4] Sair.\n\nDigite o numero que corresponde a sua escolha: ");
     scanf("%d", &modo); 
     switch (modo){
     case 1:
@@ -87,6 +87,7 @@ int salvaArquivo(char nome[100], int x, int y, char matriz[x][y]){
 //personagem(&pos_x, &pos_y, .....)
 //Retorna a posição representado por '@'
 //EM DESENVOLVIMENTO
+/*
 void personagem(int *a, int *b, int x, int y, char matriz[x][y]){
 	int i,j;
 	int cord[2]; 
@@ -100,6 +101,7 @@ void personagem(int *a, int *b, int x, int y, char matriz[x][y]){
 		}
 	}
 }
+*/
 
 //Feature que movimenta o personagem '@' pelo labirinto
 //EM DESENVOLVIMENTO
