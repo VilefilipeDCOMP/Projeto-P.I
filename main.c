@@ -41,11 +41,11 @@ int main(int argc, char **argv){
     scanf("%d", &modo); 
     switch (modo){
     case 1:
-        
+        printf("Em breve\n");
         break;
 
     case 2:
-
+        printf("Em breve\n");
         break;
     
     case 3:
@@ -63,7 +63,7 @@ int main(int argc, char **argv){
 
 int salvaArquivo(char nome[100], int x, int y, char matriz[x][y]){
 	int i,j;
-	printf("Digite um nome para o arquivo: ");
+	printf("Digite um nome para o arquivo (Sem o '.txt'): ");
     getchar();
     fgets(nome, 95,stdin);
     nome[strcspn(nome, "\n")] = 0;
