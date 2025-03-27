@@ -25,7 +25,7 @@ int acc = 0;
 //Verifica se um determinado espaço é permitido, se sim retorna 1(true), caso contrário retorna 0(false)	
 int blockedArea (char elemento, int x, int y, int i, int j){ 
     
-    if(elemento == '#' || elemento == '*' || i > x-1 || i < 0 || j > y-1 || j < 0){
+    if(elemento == '#' || elemento == '*' || i > x-1 || elemento == '@' ||i < 0 || j > y-1 || j < 0){
         return 0;
     }
     else {
@@ -35,6 +35,7 @@ int blockedArea (char elemento, int x, int y, int i, int j){
 int random();
 int salvaArquivo();
 void posInicial();
+void rastroPlayer();
 int verificandoArea();
 void printlab();
 void mov_aleatoria();
@@ -75,12 +76,64 @@ int main(int argc, char **argv){
         // printf("Em breve\n");
         posInicial(x,y,labirinto);
         printf("I=%i  J=%i\n",player.PosI, player.PosJ);
+       
         mov_aleatoria(x, y, labirinto);
         mov_aleatoria(x, y, labirinto);
         mov_aleatoria(x, y, labirinto);
         mov_aleatoria(x, y, labirinto);
         mov_aleatoria(x, y, labirinto);
         mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+        mov_aleatoria(x, y, labirinto);
+
         printf("\n");
         printlab(x,y,labirinto);
         //printf("Baixo: %c", baixo);
@@ -163,47 +216,54 @@ int verificandoArea(int x, int y, char matriz[x][y]){
 
 
 void mov_aleatoria(int x, int y, char matriz[x][y]){ // retorna a próx posição
-    acc ++;
-	char N = matriz[player.PosI-1][player.PosJ], S = matriz[player.PosI+1][player.PosJ], O = matriz[player.PosI][player.PosJ-1], L = matriz[player.PosI][player.PosJ+1];
+	
+    char N = matriz[player.PosI-1][player.PosJ], S = matriz[player.PosI+1][player.PosJ], O = matriz[player.PosI][player.PosJ-1], L = matriz[player.PosI][player.PosJ+1];
     
-    verificandoArea(x, y, matriz);
+    if (acc == 0){
+        
+        verificandoArea(x, y, matriz);
+    }
     
     int r = random(4);
-
+    
     int psI = player.PosI;
     int psJ = player.PosJ;
-
-    if (matriz[psI][psJ] != '@')
-        matriz[psI][psJ] = '*';
-
-    if (r == 0 && player.N == 1){
-        printf("%c", N);
-        printf("\n%d",r);
-        player.PosI --;
-        printf("\nI=%i  J=%i\n %i",player.PosI, player.PosJ,acc);
+    
+    
+    if (acc >= 0){
+        acc ++;
+        
+        if (r == 0 && player.N == 1){
+            player.PosI --;
+            rastroPlayer(psI,psJ,x,y,matriz);
+            printf("\nI=%i  J=%i\n acc = %i\n",player.PosI, player.PosJ,acc);
+            acc = 0;
+        }
+        else if (r == 1 && player.S == 1){
+            player.PosI ++;
+            rastroPlayer(psI,psJ,x,y,matriz);
+            printf("\nI=%i  J=%i\n acc = %i\n",player.PosI, player.PosJ,acc);
+            acc = 0;
+        }
+        else if (r == 2 && player.O == 1){
+            player.PosJ --;
+            rastroPlayer(psI,psJ,x,y,matriz);
+            printf("\nI=%i  J=%i\n acc = %i\n",player.PosI, player.PosJ,acc);
+            acc = 0;
+        }
+        else if (r == 3 && player.L == 1){
+            player.PosJ ++;
+            rastroPlayer(psI,psJ,x,y,matriz);
+            printf("\nI=%i  J=%i\n acc = %i\n",player.PosI, player.PosJ,acc);
+            acc = 0;
+        }
+        else if(player.N == 0 && player.S == 0 && player.L == 0 && player.O == 0){
+            printf("Preso no Labirinto");
+            rastroPlayer(psI,psJ,x,y,matriz);
+            acc = -1;
+        }
+        else {mov_aleatoria(x, y, matriz); }
     }
-    else if (r == 1 && player.S == 1){
-        printf("%c", S);
-        printf("\n%d",r);
-        player.PosI ++;
-        printf("\nI=%i  J=%i\n %i",player.PosI, player.PosJ,acc);
-    }
-    else if (r == 2 && player.O == 1){
-        printf("%c", O);
-        printf("\n%d",r);
-        player.PosJ --;
-        printf("\nI=%i  J=%i\n %i",player.PosI, player.PosJ,acc);
-    }
-    else if (r == 3 && player.L == 1){
-        printf("%c", L);
-        printf("\n%d",r);
-        player.PosJ ++;
-        printf("\nI=%i  J=%i\n%i",player.PosI, player.PosJ,acc);
-    }
-    else if(player.N == 0 && player.S == 0 && player.L == 0 && player.O == 0){
-        printf("Preso no Labirinto");
-    }
-    else {mov_aleatoria(x, y, matriz); }
 
     
 
@@ -235,4 +295,20 @@ void printlab(int x, int y, char labirinto[x][y]){
         printf("\n");
     }
     } 
+}
+
+void rastroPlayer(int posI,int posJ,int x,int y,char matriz[x][y]){
+
+    if (matriz[posI][posJ] != '@'){
+            
+    if (matriz[posI][posJ] == '.'){
+            matriz[posI][posJ] = '*';
+    }
+    else if (matriz[posI][posJ] == '%'){
+        matriz[posI][posJ] = '!';
+    }
+    if (matriz[player.PosI][player.PosJ] == '$'){
+        matriz[posI][posJ] = 'v';
+    }
+    }
 }
