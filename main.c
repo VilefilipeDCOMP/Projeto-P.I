@@ -52,58 +52,99 @@ int main(int argc, char **argv){
 
     //Declaração da variavel labirinto
 	char labirinto[x][y];
+	char labirintoORIGINAL[x][y];
 	
 	//Atribui cada elemento do arquivo a um char [x][y] que pertence ao labirinto
 	for (int i = 0; i < x; i++) {
         for (int j = 0; j < y; j++) {
 			fscanf(teste, " %c", &labirinto[i][j]);
+            labirintoORIGINAL[i][j] = labirinto[i][j];
         }
     }
 	fclose(teste);
 
-    //Posição do objetivo e posição inicial do player
-	posicao('$', x, y, labirinto);
-    posicao('@', x, y, labirinto);
+  
 	
-	printlab(x,y,labirinto);
-    printf("Qual acao deseja realizar?\n[1] Tentar resolver uma vez.\n[2] Tentar resolver ate conseguir.\n[3] Salvar a resolucao.\n[4] Sair.\n\nDigite o numero que corresponde a sua escolha: ");
-    scanf("%d", &modo); 
-    switch (modo){
-    case 1:
-        while(acc != -1){
-            mov_aleatoria(x, y, labirinto);
-            printlab(x,y,labirinto);
-            system("pause");
-            system("cls");
-        }
-        if (player.PosI == endI && player.PosJ == endJ){
-            printf("Escapou do labirinto!\n");
-        }
+    // int loopMenu = 0;
+    for (int loopMenu = 0; loopMenu == 0;) {
         printlab(x,y,labirinto);
-        printf("Deseja salvar a resolucao do labirinto? [S/N]: ");
-        getchar();
-        resp = getchar();
-    
-        if (resp == 'S' || resp == 's'){
-            system("cls");
-            salvaArquivo(newFile, x ,y, labirinto);
+        printf("Qual acao deseja realizar?\n[1] Tentar resolver uma vez.\n[2] Tentar resolver ate conseguir.\n[3] Salvar a resolucao.\n[4] Sair.\n\nDigite o numero que corresponde a sua escolha: ");
+        scanf("%d", &modo); 
+        switch (modo){
+        case 1:
+            acc = 0;
+            
+            //Posição do objetivo e posição inicial do player
+            posicao('$', x, y, labirinto);
+            posicao('@', x, y, labirinto);
+
+        	for (int i = 0; i < x; i++) {
+                for (int j = 0; j < y; j++) {
+                    labirinto[i][j] = labirintoORIGINAL[i][j];
+                }
+            }
+            while(acc != -1){
+                mov_aleatoria(x, y, labirinto);
+                printlab(x,y,labirinto);
+                // system("pause");
+                // system("cls");
+                system("clear");
+                printf("posI: %i; posJ: %i\n", player.PosI, player.PosJ);
+                printf("posI: %i; posJ: %i\n", endI, endJ);
+                if (player.PosI == endI && player.PosJ == endJ){
+                    labirinto[player.PosI][player.PosJ] = 'V';
+                    printf("Escapou do labirinto!\n");
+                    acc = -1;
+                }
+                // printf("\n");
+            }
+            
+            break;
+
+        case 2:
+            for (int labLoop = 0; labLoop == 0;){   
+                printf("%i",labLoop);
+                acc = 0;
+            
+                //Posição do objetivo e posição inicial do player
+                posicao('$', x, y, labirinto);
+                posicao('@', x, y, labirinto);
+
+                for (int i = 0; i < x; i++) {
+                    for (int j = 0; j < y; j++) {
+                        labirinto[i][j] = labirintoORIGINAL[i][j];
+                    }
+                }
+                while(acc != -1){
+                    mov_aleatoria(x, y, labirinto);
+                    printlab(x,y,labirinto);
+                    // system("pause");
+                    // system("cls");
+                    system("clear");
+                    if (player.PosI == endI && player.PosJ == endJ){
+                        labirinto[player.PosI][player.PosJ] = 'V';
+                        printf("Escapou do labirinto!\n");
+                        acc = 1;
+                        labLoop = -1;
+                    }
+                    printf("\n");
+                } 
+                  
+            }
+            break;
+
+        case 3:
+            // system("cls"); //em linux é "clear" e em windows "cls"
+            salvaArquivo(newFile, x, y, labirinto);
+            loopMenu = 1;
+            break;
+        case 4:
+            loopMenu = 1;
+            break;
         }
-        //printf("Baixo: %c", baixo);
-        break;
-
-    case 2:
-        printf("Em breve\n");
-        break;
-    
-    case 3:
-        system("cls"); //em linux é "clear" e em windows "cls"
-        salvaArquivo(newFile, x, y, labirinto);
-        break;
-
-    case 4:
-        break;
-    }
-    return 0;
+        
+    }  
+    return 0; 
 }
 
 // Cuida da leitura e salvamento do labirinto ------------------------------------------
@@ -194,7 +235,7 @@ int verificandoArea(int x, int y, char matriz[x][y]){
     player.O = blockedArea(O, x, y, player.PosI, player.PosJ - 1);
 
 
-    printf("N %d S %d L %d O %d\n", player.N,player.S,player.L,player.O);
+    // printf("N %d S %d L %d O %d\n", player.N,player.S,player.L,player.O);
 }
 
 int aleatorio(int x){
@@ -218,9 +259,10 @@ void rastroPlayer(int posI,int posJ,int x,int y,char matriz[x][y]){
         else if (matriz[posI][posJ] == '%'){
                  batalha(posI, posJ, x, y, matriz);
              }
-    if (matriz[posI][posJ] == '$'){
-        matriz[posI][posJ] = 'V';
-    }
+    // if (matriz[posI][posJ] == '$'){
+    //     matriz[posI][posJ] = 'V';
+    //     // acc = 10;
+    // }
     }
 }
 
@@ -299,7 +341,7 @@ void mov_aleatoria(int x, int y, char matriz[x][y]){ // retorna a próx posiçã
         if (r == 0 && player.N == 1){
             rastroPlayer(psI,psJ,x,y,matriz);
             player.PosI --;
-            printf("\nI=%i  J=%i\n acc = %i\n",player.PosI+1, player.PosJ,acc);
+            printf("\nI=%i  J=%i acc = %i\n",player.PosI+1, player.PosJ,acc);
             acc = 0;
             if(matriz[psI][psJ] == '+' || matriz[psI][psJ] == '?'){
                 acc = -1;
@@ -309,7 +351,7 @@ void mov_aleatoria(int x, int y, char matriz[x][y]){ // retorna a próx posiçã
         else if (r == 1 && player.S == 1){
                  rastroPlayer(psI,psJ,x,y,matriz);
                  player.PosI ++;
-                 printf("\nI=%i  J=%i\n acc = %i\n",player.PosI-1, player.PosJ,acc);
+                 printf("\nI=%i  J=%i acc = %i\n",player.PosI-1, player.PosJ,acc);
                  acc = 0;
                  if(matriz[psI][psJ] == '+' || matriz[psI][psJ] == '?'){
                     acc = -1;
@@ -319,7 +361,7 @@ void mov_aleatoria(int x, int y, char matriz[x][y]){ // retorna a próx posiçã
              else if (r == 2 && player.O == 1){
                       rastroPlayer(psI,psJ,x,y,matriz);
                       player.PosJ --;
-                      printf("\nI=%i  J=%i\n acc = %i\n",player.PosI, player.PosJ+1,acc);
+                      printf("\nI=%i  J=%i acc = %i\n",player.PosI, player.PosJ+1,acc);
                       acc = 0;
                       if(matriz[psI][psJ] == '+' || matriz[psI][psJ] == '?'){
                         acc = -1;
@@ -329,7 +371,7 @@ void mov_aleatoria(int x, int y, char matriz[x][y]){ // retorna a próx posiçã
                   else if (r == 3 && player.L == 1){
                            rastroPlayer(psI,psJ,x,y,matriz);
                            player.PosJ ++;
-                           printf("\nI=%i  J=%i\n acc = %i\n",player.PosI, player.PosJ-1,acc);
+                           printf("\nI=%i  J=%i acc = %i\n",player.PosI, player.PosJ-1,acc);
                            acc = 0;
                            if(matriz[psI][psJ] == '+' || matriz[psI][psJ] == '?'){
                             acc = -1;
