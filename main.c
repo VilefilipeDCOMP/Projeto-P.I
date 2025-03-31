@@ -11,12 +11,13 @@ typedef struct{
 	int O;
     int PosI;
     int PosJ;
+    int power;
+    int endI;
+    int endJ;
 } atributos;
 
 atributos player;
-int power = 50;
-int endI;
-int endJ;
+
 
 long int aleatorioizer;
 int acc = 0;
@@ -36,7 +37,8 @@ int main(int argc, char **argv){
     char newFile[100], initFile[100], dimensao[30];
     int modo, x, y, win;
     char resp;
-    
+    player.power = 50;
+
     // Cria a semente para o número aleatório 
     aleatorioizer = time(NULL);
     srand(aleatorioizer);
@@ -90,8 +92,8 @@ int main(int argc, char **argv){
                 // system("cls");
                 system("clear");
                 printf("posI: %i; posJ: %i\n", player.PosI, player.PosJ);
-                printf("posI: %i; posJ: %i\n", endI, endJ);
-                if (player.PosI == endI && player.PosJ == endJ){
+                printf("posI: %i; posJ: %i\n", player.endI, player.endJ);
+                if (player.PosI == player.endI && player.PosJ == player.endJ){
                     labirinto[player.PosI][player.PosJ] = 'V';
                     printf("Escapou do labirinto!\n");
                     acc = -1;
@@ -120,11 +122,11 @@ int main(int argc, char **argv){
                     printlab(x,y,labirinto);
                     // system("pause");
                     // system("cls");
-                    system("clear");
-                    if (player.PosI == endI && player.PosJ == endJ){
+                    system("cls");
+                    if (player.PosI == player.endI && player.PosJ == player.endJ){
                         labirinto[player.PosI][player.PosJ] = 'V';
                         printf("Escapou do labirinto!\n");
-                        acc = 1;
+                        acc = -1;
                         labLoop = -1;
                     }
                     printf("\n");
@@ -203,8 +205,8 @@ void posicao(char objeto, int x, int y, char matriz[x][y]){
             for(i=0;i<x;i++){
 		        for(j=0;j<y;j++){
 			        if(matriz[i][j] == '$'){
-			            endI = i;
-			            endJ = j;
+			            player.endI = i;
+			            player.endJ = j;
 				        return;
 			        }
 		        }
@@ -268,10 +270,11 @@ void rastroPlayer(int posI,int posJ,int x,int y,char matriz[x][y]){
 
 void batalha(int i, int j, int x, int y,char matriz[x][y]){
     int f = aleatorio(100);
-    switch (power){
+    printf("P = %d", player.power);
+    switch (player.power){
         case 50:
             if (f < 50){
-                power += 10;
+                player.power += 10;
                 matriz[i][j] = '!';
             }
             else 
@@ -280,7 +283,7 @@ void batalha(int i, int j, int x, int y,char matriz[x][y]){
         
         case 60:
             if (f < 60){
-                power += 10;
+                player.power += 10;
                 matriz[i][j] = '!';
             }
             else 
@@ -289,7 +292,7 @@ void batalha(int i, int j, int x, int y,char matriz[x][y]){
 
         case 70:
             if (f < 70){
-                power += 10;
+                player.power += 10;
                 matriz[i][j] = '!';
             }
             else 
@@ -298,7 +301,7 @@ void batalha(int i, int j, int x, int y,char matriz[x][y]){
 
         case 80:
             if (f < 80){
-                power += 10;
+                player.power += 10;
                 matriz[i][j] = '!';
             }
             else 
@@ -307,7 +310,7 @@ void batalha(int i, int j, int x, int y,char matriz[x][y]){
 
         case 90:
             if (f < 90){
-                power += 10;
+                player.power += 10;
                 matriz[i][j] = '!';
             }
             else 
@@ -324,8 +327,6 @@ void batalha(int i, int j, int x, int y,char matriz[x][y]){
 // Algoritmo de modificação ----------------------------------------------------------
 
 void mov_aleatoria(int x, int y, char matriz[x][y]){ // retorna a próx posição
-	
-    char N = matriz[player.PosI-1][player.PosJ], S = matriz[player.PosI+1][player.PosJ], O = matriz[player.PosI][player.PosJ-1], L = matriz[player.PosI][player.PosJ+1];
     
     if (acc == 0){
         verificandoArea(x, y, matriz);
