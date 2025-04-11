@@ -167,7 +167,7 @@ int main(int argc, char **argv){
                             mov_aleatorio_inteligente(x, y, labirinto);
                         }
                     
-                        printf("Iteração %iº\n\n",accTest);
+                        printf("Iteração: %iº\n\n",accTest);
                         printlab(x,y,labirinto);
                         limpar();
                         
@@ -177,8 +177,12 @@ int main(int argc, char **argv){
                         if (player.PosI == player.endI && player.PosJ == player.endJ){
                             labirinto[player.PosI][player.PosJ] = 'V';
                             printf("Escapou do labirinto!\n");
+                            printf("Iterações totais: %d\n", limitador);
                             acc = -1;
                             labLoop = -1;
+                        } 
+                        if (limitador == 100) {
+                            printf("Iteração chegou no seu limite.\n");
                         }                     
                     }}
                     else
