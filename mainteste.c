@@ -4,6 +4,22 @@
 #include <locale.h>
 #include <time.h>
 
+#if defined(_WIN32) || defined(_WIN64) || defined(__WINDOWS__)
+    #include <windows.h>
+    void limpar(){
+
+        system("cls");
+    }
+#else
+    
+    #include <unistd.h>
+    
+    void limpar(){
+            system("clear");
+        }
+#endif
+
+
 // Define um struct global para o player
 typedef struct{
 	int N;
@@ -48,10 +64,10 @@ int main(int argc, char **argv){
     int accTest = 0;
     int limitador = 0;
 
-    // Serve para resolver os problemas de acentuaÃ§Ã£o em C
-    setlocale(LC_ALL, "Portuguese");
+    // Serve para resolver os problemas de acentuação em C
+    setlocale(LC_ALL, "Portuguese_Brazil");
 
-    // Cria a semente para o nÃºmero aleatÃ³rio 
+    // Cria a semente para o número aleatório 
     aleatorioizer = time(NULL);
     srand(aleatorioizer);
 
@@ -59,12 +75,12 @@ int main(int argc, char **argv){
     for (int i=0; i<argc; i++)
     	strcpy(initFile,argv[i]);
     
-    //LÃª a primeira linha do arquivo para determinar as dimensoes do labirinto
+    //Lê a primeira linha do arquivo para determinar as dimensoes do labirinto
     FILE* teste = fopen(initFile, "r");
     fgets(dimensao, sizeof(dimensao), teste);
     sscanf(dimensao, "%d %d", &x,&y);
 
-    //DeclaraÃ§Ã£o da variavel labirinto
+    //Declaração da variavel labirinto
 	char labirinto[x][y];
 	char labirintoORIGINAL[x][y];
 	char labirintoMEMORIA[x][y];
@@ -81,7 +97,7 @@ int main(int argc, char **argv){
     for (int loopMenu = 0; loopMenu == 0;) {
         printf("\n");
         printlab(x,y,labirinto);
-        printf("Qual aÃ§Ã£o deseja realizar?\n[1] Tentar resolver uma vez.\n[2] Tentar resolver ate conseguir.\n[3] Salvar a resolucao.\n[4] Sair.\n\nDigite o numero que corresponde a sua escolha: ");
+        printf("Qual ação deseja realizar?\n[1] Tentar resolver uma vez.\n[2] Tentar resolver ate conseguir.\n[3] Salvar a resolucao.\n[4] Sair.\n\nDigite o numero que corresponde a sua escolha: ");
         scanf("%d", &modo); 
         switch (modo){
         case 1:
@@ -89,7 +105,7 @@ int main(int argc, char **argv){
             scanf("%d", &modo); 
             acc = 0;
             
-            //PosiÃ§Ã£o do objetivo e posiÃ§Ã£o inicial do player
+            //Posição do objetivo e posição inicial do player
             posicao('$', x, y, labirinto);
             posicao('@', x, y, labirinto);
 
@@ -106,12 +122,8 @@ int main(int argc, char **argv){
                     mov_aleatorio_inteligente(x, y, labirinto);
                 }
                 printlab(x,y,labirinto);
+                limpar();
 
-                #if defined(_WIN32) || defined(_WIN64) || defined(__WINDOWS__)
-                    system("cls");
-                #else
-                    system("clear");
-                #endif
 
                 // printf("posI: %i; posJ: %i\n", player.PosI, player.PosJ);
                 // printf("posI: %i; posJ: %i\n", player.endI, player.endJ);
@@ -129,12 +141,19 @@ int main(int argc, char **argv){
             accTest = 0;
             printf("[1] Aleatorio.\n[2] Aleatorio Inteligente.\n");
             scanf("%d", &modo); 
-            // Como nesse caso, queremos que ele tente vÃ¡rias vezes (com um limitador de 100 vezes), utilizamos esse labloop.
+            for (int i = 0; i < x; i++) {
+                for (int j = 0; j < y; j++) {
+                    labirinto[i][j] = labirintoORIGINAL[i][j];
+                }
+            }
+
+            // Como nesse caso, queremos que ele tente várias vezes (com um limitador de 100 vezes), utilizamos esse labloop.
             for (int labLoop = 0; labLoop == 0;){ 
                 if (limitador <= 99) {
                     limitador++;
                     accTest++;  
                     acc = 0;
+                    player.power = 50;
                     
                     for (int i = 0; i < x; i++) {
                         for (int j = 0; j < y; j++) {
@@ -142,7 +161,7 @@ int main(int argc, char **argv){
                         }
                     }
 
-                    //PosiÃ§Ã£o do objetivo e posiÃ§Ã£o inicial do player
+                    //Posição do objetivo e posição inicial do player
                     posicao('$', x, y, labirinto);
                     posicao('@', x, y, labirinto);
 
@@ -153,20 +172,16 @@ int main(int argc, char **argv){
                             mov_aleatorio_inteligente(x, y, labirinto);
                         }
                     
+                        printf("Iteração %iº\n\n",accTest);
                         printlab(x,y,labirinto);
+                        //limpar();
                         
-                        #if defined(_WIN32) || defined(_WIN64) || defined(__WINDOWS__)
-                            system("cls");
-                        #else
-                            system("clear");
-                        #endif
                         
-                        printf("IteraÃ§Ã£o %iÂº\n",accTest);
 
-                        // Termina o loop de movimentaÃ§Ãµes de um Ãºnico labirinto (com o acc = -1) e termina o loop de repetir labs. atÃ© resolver (com o laploop = -1)
+                        // Termina o loop de movimentações de um único labirinto (com o acc = -1) e termina o loop de repetir labs. até resolver (com o laploop = -1)
                         if (player.PosI == player.endI && player.PosJ == player.endJ){
                             labirinto[player.PosI][player.PosJ] = 'V';
-                            printf("Escapou do labirinto!\n");
+                            printf("Escapou do labirinto!");
                             acc = -1;
                             labLoop = -1;
                         }                     
@@ -228,7 +243,7 @@ int salvaArquivo(char nome[100], int x, int y, char matriz[x][y]){
 }
 
 //------------------------------------------------------------------------------------
-// Base para a movimentaÃ§Ã£o ----------------------------------------------------------
+// Base para a movimentação ----------------------------------------------------------
 
 void posicao(char objeto, int x, int y, char matriz[x][y]){
 	int i;
@@ -255,11 +270,11 @@ void posicao(char objeto, int x, int y, char matriz[x][y]){
 		        }
 	        }
          }
-         else printf("FunÃ§Ã£o definida somente para os caracteres '@' e '$' ");
+         else printf("Função definida somente para os caracteres '@' e '$' ");
          return;
 }
 
-// Verifica se um determinado espaÃ§o Ã© permitido, se sim retorna 1(true), caso contrÃ¡rio retorna 0(false)	
+// Verifica se um determinado espaço é permitido, se sim retorna 1(true), caso contrário retorna 0(false)	
 int blockedArea (char elemento, int x, int y, int i, int j){ 
     
     if(elemento == '#' || elemento == '*' || elemento == '!' || i > x-1 || elemento == '@' ||i < 0 || j > y-1 || j < 0){
@@ -270,7 +285,7 @@ int blockedArea (char elemento, int x, int y, int i, int j){
     }
 }
 
-// Serve somente para informar em que posiÃ§Ãµes (Norte, Sul, Leste e Oeste) o personagem estÃ¡ livre para se locomover. 
+// Serve somente para informar em que posições (Norte, Sul, Leste e Oeste) o personagem está livre para se locomover. 
 int verificandoArea(int x, int y, char matriz[x][y]){
 	char N = matriz[player.PosI-1][player.PosJ], S = matriz[player.PosI+1][player.PosJ], O = matriz[player.PosI][player.PosJ-1], L = matriz[player.PosI][player.PosJ+1];
     
@@ -284,7 +299,7 @@ int aleatorio(int x){
     return rand() % x;
 }
 
-// Serve para modificar a matriz do labirinto a cada movimentaÃ§Ã£o
+// Serve para modificar a matriz do labirinto a cada movimentação
 void rastroPlayer(int posI,int posJ,int x,int y,char matriz[x][y]){
 
     if (matriz[posI][posJ] != '@'){
@@ -309,7 +324,6 @@ void rastroPlayer(int posI,int posJ,int x,int y,char matriz[x][y]){
 
 void batalha(int i, int j, int x, int y,char matriz[x][y]){
     int f = aleatorio(100);
-    printf("P = %d", player.power);
     switch (player.power){
         case 50:
             if (f < 50){
@@ -363,7 +377,7 @@ void batalha(int i, int j, int x, int y,char matriz[x][y]){
 }
 
 //------------------------------------------------------------------------------------
-// Algoritmo de modificaÃ§Ã£o ----------------------------------------------------------
+// Algoritmo de modificação ----------------------------------------------------------
 
 void mov_aleatoria(int x, int y, char matriz[x][y]){
 
@@ -375,12 +389,12 @@ void mov_aleatoria(int x, int y, char matriz[x][y]){
     int psI = player.PosI;
     int psJ = player.PosJ;
     
-    // O personagem se move de acordo com o valor de r (seguindo o padrÃ£o: 0 = Norte, 1 = Sul, 2 = Oeste, 3 = Leste) e se a posiÃ§Ã£o para tal direÃ§Ã£o esteja livre. Caso a posiÃ§Ã£o nÃ£o esteja livre, essa funÃ§Ã£o serÃ¡ chamada novamente atÃ© encontrar um valor aceitÃ¡vel, porÃ©m caso todas as posiÃ§Ãµes estejam ocupadas, serÃ¡ chamado o rastroPlayer (para colocar o simbolo ?).
+    // O personagem se move de acordo com o valor de r (seguindo o padrão: 0 = Norte, 1 = Sul, 2 = Oeste, 3 = Leste) e se a posição para tal direção esteja livre. Caso a posição não esteja livre, essa função será chamada novamente até encontrar um valor aceitável, porém caso todas as posições estejam ocupadas, será chamado o rastroPlayer (para colocar o simbolo ?).
     if (acc >= 0){
         acc ++;
         if (r == 0 && player.N == 1){
             rastroPlayer(psI,psJ,x,y,matriz);
-            player.PosI --; // Atualizar a posiÃ§Ã£o do personagem globalmente 
+            player.PosI --; // Atualizar a posição do personagem globalmente 
             // printf("\nI=%i  J=%i acc = %i\n",player.PosI+1, player.PosJ,acc);
             acc = 0;
             if(matriz[psI][psJ] == '+' || matriz[psI][psJ] == '?'){
@@ -439,8 +453,8 @@ void mov_aleatorio_inteligente (int x, int y, char matriz[x][y]) {
     if (acc >= 0){
         acc ++;
 
-        // A diferenÃ§a entre essa movimentaÃ§Ã£o e a outra Ã© que o personagem terÃ¡ mais chance de se mover em direÃ§Ã£o ao ponto final, provando ser Ãºtil em alguns casos.
-        // No caso do eixo Y, ele verifica se o fim do labirinto Ã© maior que a posiÃ§Ã£o do personagem, caso verdade ele deve descer e se contrÃ¡rio subir
+        // A diferença entre essa movimentação e a outra é que o personagem terá mais chance de se mover em direção ao ponto final, provando ser útil em alguns casos.
+        // No caso do eixo Y, ele verifica se o fim do labirinto é maior que a posição do personagem, caso verdade ele deve descer e se contrário subir
         if (psI < player.endI) {
             // Desce
             posMaiorChanceY = 1;
@@ -461,7 +475,7 @@ void mov_aleatorio_inteligente (int x, int y, char matriz[x][y]) {
         // printf("[DEBUG] endI: %i, endJ: %i\n", player.endI, player.endJ);
         // printf("[DEBUG] MaiorChanceX: %i, MaiorChanceY: %i, r: %i\n", posMaiorChanceX, posMaiorChanceY, r);
 
-        // Para ele ter mais chance de ir ao ponto desejado, serÃ¡ feito o aleatÃ³rio de 6 valores. Os valores de 0 a 3 funcionaram da mesma forma que o Ãºltimo mecanismo de movimentaÃ§Ã£o porÃ©m os valores de 4 a 5 serviram para que a posiÃ§Ã£o de maior possibilidade tenha mais posibilidade de ser escolhido.
+        // Para ele ter mais chance de ir ao ponto desejado, será feito o aleatório de 6 valores. Os valores de 0 a 3 funcionaram da mesma forma que o último mecanismo de movimentação porém os valores de 4 a 5 serviram para que a posição de maior possibilidade tenha mais posibilidade de ser escolhido.
         if ((r == 0 || ((r == 4 || r == 5) && posMaiorChanceY == 0)) && player.N == 1){
             rastroPlayer(psI,psJ,x,y,matriz);
             player.PosI --;

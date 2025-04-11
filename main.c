@@ -236,8 +236,6 @@ int verificandoArea(int x, int y, char matriz[x][y]){
     player.L = blockedArea(L, x, y, player.PosI, player.PosJ + 1);
     player.O = blockedArea(O, x, y, player.PosI, player.PosJ - 1);
 
-
-    // printf("N %d S %d L %d O %d\n", player.N,player.S,player.L,player.O);
 }
 
 int aleatorio(int x){
