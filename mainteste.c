@@ -39,7 +39,6 @@ void rastroPlayer();
 void batalha();
 void mov_aleatoria();
 void mov_aleatorio_inteligente();
-void mov_aleatorio_inteligente_mem();
 
 int main(int argc, char **argv){
     char newFile[100], initFile[100], dimensao[30];
@@ -80,6 +79,7 @@ int main(int argc, char **argv){
 	fclose(teste);
 
     for (int loopMenu = 0; loopMenu == 0;) {
+        printf("\n");
         printlab(x,y,labirinto);
         printf("Qual ação deseja realizar?\n[1] Tentar resolver uma vez.\n[2] Tentar resolver ate conseguir.\n[3] Salvar a resolucao.\n[4] Sair.\n\nDigite o numero que corresponde a sua escolha: ");
         scanf("%d", &modo); 
@@ -106,7 +106,6 @@ int main(int argc, char **argv){
                     mov_aleatorio_inteligente(x, y, labirinto);
                 }
                 printlab(x,y,labirinto);
-                printf("\n");
 
                 #if defined(_WIN32) || defined(_WIN64) || defined(__WINDOWS__)
                     system("cls");
@@ -128,7 +127,7 @@ int main(int argc, char **argv){
 
         case 2:
             accTest = 0;
-            printf("[1] Aleatorio.\n[2] Aleatorio Inteligente.\n[3] Memoria\n");
+            printf("[1] Aleatorio.\n[2] Aleatorio Inteligente.\n");
             scanf("%d", &modo); 
             // Como nesse caso, queremos que ele tente várias vezes (com um limitador de 100 vezes), utilizamos esse labloop.
             for (int labLoop = 0; labLoop == 0;){ 
@@ -137,12 +136,9 @@ int main(int argc, char **argv){
                     accTest++;  
                     acc = 0;
                     
-                    // Utilizado para resetar o labirinto nos modos de mov_aleatoria e mov_aleatorio_inteligente e em alguns casos do mov_aleatorio_inteligente_mem
-                    if ((pontosLab <= pontosLabAnt) || modo != 3) {
-                        for (int i = 0; i < x; i++) {
-                            for (int j = 0; j < y; j++) {
-                                labirinto[i][j] = labirintoORIGINAL[i][j];
-                            }
+                    for (int i = 0; i < x; i++) {
+                        for (int j = 0; j < y; j++) {
+                            labirinto[i][j] = labirintoORIGINAL[i][j];
                         }
                     }
 
@@ -153,10 +149,8 @@ int main(int argc, char **argv){
                     while(acc != -1){
                         if (modo == 1){
                             mov_aleatoria(x, y, labirinto); 
-                        } else if (modo == 2) {
-                            mov_aleatorio_inteligente(x, y, labirinto);
                         } else {
-                            mov_aleatorio_inteligente_mem(x, y, labirinto);
+                            mov_aleatorio_inteligente(x, y, labirinto);
                         }
                     
                         printlab(x,y,labirinto);
@@ -166,7 +160,6 @@ int main(int argc, char **argv){
                         #else
                             system("clear");
                         #endif
-
                         
                         printf("Iteração %iº\n",accTest);
 
@@ -179,28 +172,13 @@ int main(int argc, char **argv){
                         }                     
                         printf("\n");
 
-                        // Mecanica do mov_aleatorio_inteligente_mem
-                        if ((pontosLab <= pontosLabAnt) && modo == 3) {
-                            pontosLabAnt = pontosLab;
-                        }
-                    } 
-                    // Mecanica do mov_aleatorio_inteligente_mem para a próxima iteração do labirinto começar no ponto no qual o personagem parou
-                    if ((pontosLab <= pontosLabAnt) && modo == 3) {
-                        labirinto[player.PosI][player.PosJ] = '@';
-                    }
-                    }
+                    }}
                     else
                         break;
             }
-            // if (blockedArea()):
-            if (acc != -1){
-                labirinto[player.PosI][player.PosJ] = '*';
-            }
-            labirinto[posicaoInicialdoLabI][posicaoInicialdoLabJ] = '@';
             break;
 
         case 3:
-            // system("cls"); //em linux é "clear" e em windows "cls"
             salvaArquivo(newFile, x, y, labirinto);
             loopMenu = 1;
             break;
@@ -216,7 +194,6 @@ int main(int argc, char **argv){
 // Cuida da leitura e salvamento do labirinto ------------------------------------------
 
 void printlab(int x, int y, char labirinto[x][y]){
-    printf("\n");
     for (int i = 0; i < x; i++) {
         for (int j = 0; j < y; j++) {
             printf("%c ", labirinto[i][j]);
@@ -260,10 +237,6 @@ void posicao(char objeto, int x, int y, char matriz[x][y]){
         for(i=0;i<x;i++){
 		    for(j=0;j<y;j++){
 			    if(matriz[i][j] == '@'){
-                    if (player.PosI == 0) {
-                        posicaoInicialdoLabI = i;
-                        posicaoInicialdoLabJ = j;
-                    }
 				    player.PosI = i;
 				    player.PosJ = j;
 				    return;
@@ -484,15 +457,15 @@ void mov_aleatorio_inteligente (int x, int y, char matriz[x][y]) {
             posMaiorChanceX = 3;
         }
         
-        printf("[DEBUG] psI: %i, psJ: %i\n", psI, psJ);
-        printf("[DEBUG] endI: %i, endJ: %i\n", player.endI, player.endJ);
-        printf("[DEBUG] MaiorChanceX: %i, MaiorChanceY: %i, r: %i\n", posMaiorChanceX, posMaiorChanceY, r);
+        // printf("[DEBUG] psI: %i, psJ: %i\n", psI, psJ);
+        // printf("[DEBUG] endI: %i, endJ: %i\n", player.endI, player.endJ);
+        // printf("[DEBUG] MaiorChanceX: %i, MaiorChanceY: %i, r: %i\n", posMaiorChanceX, posMaiorChanceY, r);
 
         // Para ele ter mais chance de ir ao ponto desejado, será feito o aleatório de 6 valores. Os valores de 0 a 3 funcionaram da mesma forma que o último mecanismo de movimentação porém os valores de 4 a 5 serviram para que a posição de maior possibilidade tenha mais posibilidade de ser escolhido.
         if ((r == 0 || ((r == 4 || r == 5) && posMaiorChanceY == 0)) && player.N == 1){
             rastroPlayer(psI,psJ,x,y,matriz);
             player.PosI --;
-            printf("\nI=%i  J=%i acc = %i\n",player.PosI+1, player.PosJ,acc);
+            // printf("\nI=%i  J=%i acc = %i\n",player.PosI+1, player.PosJ,acc);
             acc = 0;
             if(matriz[psI][psJ] == '+' || matriz[psI][psJ] == '?'){
                 acc = -1;
@@ -502,7 +475,7 @@ void mov_aleatorio_inteligente (int x, int y, char matriz[x][y]) {
         else if ((r == 1 || ((r== 4 || r == 5) && posMaiorChanceY == 1)) && player.S == 1){
                  rastroPlayer(psI,psJ,x,y,matriz);
                  player.PosI ++;
-                 printf("\nI=%i  J=%i acc = %i\n",player.PosI-1, player.PosJ,acc);
+                 // printf("\nI=%i  J=%i acc = %i\n",player.PosI-1, player.PosJ,acc);
                  acc = 0;
                  if(matriz[psI][psJ] == '+' || matriz[psI][psJ] == '?'){
                     acc = -1;
@@ -512,7 +485,7 @@ void mov_aleatorio_inteligente (int x, int y, char matriz[x][y]) {
              else if ((r == 2 || ((r== 4 || r == 5) && posMaiorChanceX == 2)) && player.O == 1){
                       rastroPlayer(psI,psJ,x,y,matriz);
                       player.PosJ --;
-                      printf("\nI=%i  J=%i acc = %i\n",player.PosI, player.PosJ+1,acc);
+                      //  printf("\nI=%i  J=%i acc = %i\n",player.PosI, player.PosJ+1,acc);
                       acc = 0;
                       if(matriz[psI][psJ] == '+' || matriz[psI][psJ] == '?'){
                         acc = -1;
@@ -522,7 +495,7 @@ void mov_aleatorio_inteligente (int x, int y, char matriz[x][y]) {
                   else if ((r == 3 || ((r== 4 || r == 5) && posMaiorChanceX == 3)) && player.L == 1){
                            rastroPlayer(psI,psJ,x,y,matriz);
                            player.PosJ ++;
-                           printf("\nI=%i  J=%i acc = %i\n",player.PosI, player.PosJ-1,acc);
+                           // printf("\nI=%i  J=%i acc = %i\n",player.PosI, player.PosJ-1,acc);
                            acc = 0;
                            if(matriz[psI][psJ] == '+' || matriz[psI][psJ] == '?'){
                             acc = -1;
@@ -534,98 +507,5 @@ void mov_aleatorio_inteligente (int x, int y, char matriz[x][y]) {
                                 acc = -1;
                              }
                              else mov_aleatoria(x, y, matriz); 
-    }
-}
-
-void mov_aleatorio_inteligente_mem (int x, int y, char matriz[x][y]) {
-    if (acc == 0){
-        verificandoArea(x, y, matriz);
-    }
-    int r = aleatorio(4);
-    int psI = player.PosI;
-    int psJ = player.PosJ;
-    int posMaiorChanceX;
-    int posMaiorChanceY;
-
-    // Nesse algoritmo, ele calcula a distância entre o ponto final e ponto inicial, caso a próxima movimentação diminuia a distância, pontoslab será somado um. Caso este valor esteja subindo (ou seja cada movimentação, ele está fazendo progresso), a próxima iteração deve começar na última posição do personagem desse labirinto, porém caso o valor não mude (personagem indo em direção contrária ao ponto final) ele deve resetar para a última posição no qual ele estava tendo progresso. Por isso que este metódo utiliza memória, o aplicativo sempre terá guardado o último labirinto de melhor progresso, caso a última posição não tenha outra possibilidade de movimentação, será resetado para o labirinto original e tentará denovo.
-
-    if (acc >= 0){
-        acc ++;
-
-        // printf("\n\n");
-        // printf("[DEBUG] psI: %i, psJ: %i\n", psI, psJ);
-        // printf("[DEBUG] endI: %i, endJ: %i\n", player.endI, player.endJ);
-        // printf("[DEBUG] Pontos: %i, agr: %i, valorRelativo: %i\n", pontosLab, (psI - player.endI), valorRelativo);
-
-        matriz[psI][psJ] = '*';
-
-        if (r == 0  && player.N == 1){
-            rastroPlayer(psI,psJ,x,y,matriz);
-
-            // Anotações para desenvolvedores:
-            // Psi - (psi - 1) - Diferença entre a movimentação
-            // Player.endI - psi - Distância entre os dois objetos
-            // Player.endI - (psi - 1) - Distância entre os dois objetos depois desse primeiro passo
-            // Player.endI - (psi - 1) < Player.endI - psi - Caso a distância seja menor        
-            
-            
-            if ((player.endI - (psI - 1)) < (player.endI - psI)) {
-                pontosLab++;
-            }
-            player.PosI--;
-            // printf("\nI=%i  J=%i acc = %i\n",player.PosI+1, player.PosJ,acc);
-            acc = 0;
-            if(matriz[psI][psJ] == '+' || matriz[psI][psJ] == '?'){
-                acc = -1;
-                return;
-            } 
-        }
-        else if (r == 1  && player.S == 1){
-                rastroPlayer(psI,psJ,x,y,matriz);
-                if ((player.endI - (psI + 1)) < (player.endI - psI)) {
-                    pontosLab++;
-                }   
-                player.PosI++;
-                // printf("\nI=%i  J=%i acc = %i\n",player.PosI-1, player.PosJ,acc);
-                acc = 0;
-                if(matriz[psI][psJ] == '+' || matriz[psI][psJ] == '?'){
-                    acc = -1;
-                    return;
-                }
-             } 
-             else if (r == 2  && player.O == 1){
-                      rastroPlayer(psI,psJ,x,y,matriz);
-                    if ((player.endJ - (psJ - 1)) < (player.endJ - psI)) {
-                        pontosLab++;
-                    }   
-                      player.PosJ --;
-                    //   printf("\nI=%i  J=%i acc = %i\n",player.PosI, player.PosJ+1,acc);
-                      acc = 0;
-                      if(matriz[psI][psJ] == '+' || matriz[psI][psJ] == '?'){
-                        acc = -1;
-                        return;
-                      }
-                  }
-                  else if (r == 3  && player.L == 1){
-                           rastroPlayer(psI,psJ,x,y,matriz);
-                            if ((player.endJ - (psJ + 1)) < (player.endI - psI)) {
-                                pontosLab++;
-                            }  
-                           player.PosJ ++;
-                        //    printf("\nI=%i  J=%i acc = %i\n",player.PosI, player.PosJ-1,acc);
-                           acc = 0;
-                           if(matriz[psI][psJ] == '+' || matriz[psI][psJ] == '?'){
-                            acc = -1;
-                            return;
-                           }
-                       }
-                        else if(player.N == 0 && player.S == 0 && player.L == 0 && player.O == 0){
-                                rastroPlayer(psI,psJ,x,y,matriz);
-                                acc = -1;
-                                pontosLab = 0;
-                             }
-                             else mov_aleatoria(x, y, matriz); 
-            
-            // valorRelativo = (psI - player.endI);
     }
 }
