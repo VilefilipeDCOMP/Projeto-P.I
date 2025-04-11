@@ -45,7 +45,7 @@ int main(int argc, char **argv){
     char resp;
     player.power = 50;
     int accTest = 0;
-
+    int limitador = 0;
 
     // Cria a semente para o número aleatório 
     aleatorioizer = time(NULL);
@@ -74,8 +74,6 @@ int main(int argc, char **argv){
     }
 	fclose(teste);
 
-  
-	
     // int loopMenu = 0;
     for (int loopMenu = 0; loopMenu == 0;) {
         printlab(x,y,labirinto);
@@ -97,19 +95,19 @@ int main(int argc, char **argv){
                 }
             }
             while(acc != -1){
-                if (modo == 1){
+                if (modo == 1) {
                     mov_aleatoria(x, y, labirinto); 
-                // } else if (modo == 2) {
-                //     mov_aleatorio_inteligente(x, y, labirinto);
-                } else {
+                } 
+                else {
                     mov_aleatorio_inteligente(x, y, labirinto);
                 }
                 printlab(x,y,labirinto);
+                printf("\n");
                 // system("pause");
                 // system("cls");
                 // system("clear");
-                printf("posI: %i; posJ: %i\n", player.PosI, player.PosJ);
-                printf("posI: %i; posJ: %i\n", player.endI, player.endJ);
+                // printf("posI: %i; posJ: %i\n", player.PosI, player.PosJ);
+                // printf("posI: %i; posJ: %i\n", player.endI, player.endJ);
                 if (player.PosI == player.endI && player.PosJ == player.endJ){
                     labirinto[player.PosI][player.PosJ] = 'V';
                     printf("Escapou do labirinto!\n");
@@ -125,52 +123,55 @@ int main(int argc, char **argv){
             printf("[1] Aleatorio.\n[2] Aleatorio Inteligente.\n[3] Memoria\n");
             scanf("%d", &modo); 
             for (int labLoop = 0; labLoop == 0;){ 
-                accTest++;  
-                // printf("%i",labLoop);
-                acc = 0;
+                if (limitador <= 99) {
+                    limitador++;
+                    accTest++;  
+                    // printf("%i",labLoop);
+                    acc = 0;
             
-                if ((pontosLab <= pontosLabAnt) || modo != 3) {
-                    for (int i = 0; i < x; i++) {
-                        for (int j = 0; j < y; j++) {
-                            labirinto[i][j] = labirintoORIGINAL[i][j];
+                    if ((pontosLab <= pontosLabAnt) || modo != 3) {
+                        for (int i = 0; i < x; i++) {
+                            for (int j = 0; j < y; j++) {
+                                labirinto[i][j] = labirintoORIGINAL[i][j];
+                            }
                         }
                     }
-                }
 
-                //Posição do objetivo e posição inicial do player
-                posicao('$', x, y, labirinto);
-                posicao('@', x, y, labirinto);
+                    //Posição do objetivo e posição inicial do player
+                    posicao('$', x, y, labirinto);
+                    posicao('@', x, y, labirinto);
 
-
-                while(acc != -1){
-                    if (modo == 1){
-                        mov_aleatoria(x, y, labirinto); 
-                    } else if (modo == 2) {
-                        mov_aleatorio_inteligente(x, y, labirinto);
-                    } else {
-                        mov_aleatorio_inteligente_mem(x, y, labirinto);
-                    }
+                    while(acc != -1){
+                        if (modo == 1){
+                            mov_aleatoria(x, y, labirinto); 
+                        } else if (modo == 2) {
+                            mov_aleatorio_inteligente(x, y, labirinto);
+                        } else {
+                            mov_aleatorio_inteligente_mem(x, y, labirinto);
+                        }
                     
-                    printlab(x,y,labirinto);
-                    // system("pause");
-                    // system("cls");
-                    system("clear");
-                    printf("Iteração %iº\n",accTest);
-                    if (player.PosI == player.endI && player.PosJ == player.endJ){
-                        labirinto[player.PosI][player.PosJ] = 'V';
-                        printf("Escapou do labirinto!\n");
-                        acc = -1;
-                        labLoop = -1;
-                    }
-                    printf("\n");
+                        printlab(x,y,labirinto);
+                        // system("pause");
+                        // system("cls");
+                        system("clear");
+                        printf("Iteração %iº\n",accTest);
+                        if (player.PosI == player.endI && player.PosJ == player.endJ){
+                            labirinto[player.PosI][player.PosJ] = 'V';
+                            printf("Escapou do labirinto!\n");
+                            acc = -1;
+                            labLoop = -1;
+                        }
+                        printf("\n");
+                        if ((pontosLab <= pontosLabAnt) && modo == 3) {
+                            pontosLabAnt = pontosLab;
+                        }
+                    } 
                     if ((pontosLab <= pontosLabAnt) && modo == 3) {
-                    
-                        pontosLabAnt = pontosLab;
+                        labirinto[player.PosI][player.PosI] = '@';
                     }
-                } 
-                if ((pontosLab <= pontosLabAnt) && modo == 3) {
-                    labirinto[player.PosI][player.PosI] = '@';
-                }
+                    }
+                    else
+                        break;
             }
             break;
 
